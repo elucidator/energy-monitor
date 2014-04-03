@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (C) 2012 Pieter van der Meer (pieter(at)elucidator.nl)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" minHeight="180.0" prefHeight="615.9999000000025" prefWidth="1023.0" styleClass="airpad" xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="nl.elucidator.homeautomation.client.javafx.presentation.EnergyPresenter">
+    <children>
+        <GridPane id="GridPane" layoutX="28.0" layoutY="34.0" prefHeight="21.0" prefWidth="289.0">
+            <children>
+                <Text id="" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Power usage:"/>
+                <Label id="" fx:id="currentPower" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefWidth="97.0" text="Unknown usage" textAlignment="RIGHT" GridPane.columnIndex="1"
+                       GridPane.rowIndex="0"/>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Watt" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+            </children>
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+        </GridPane>
+        <BarChart fx:id="dayUsage" layoutX="23.0" layoutY="118.0" prefHeight="475.0" prefWidth="948.0" title="Day usage">
+            <xAxis>
+                <CategoryAxis fx:id="categoryAxis" label="Day" side="BOTTOM"/>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="numberAxis" label="Wh" side="LEFT"/>
+            </yAxis>
+        </BarChart>
+    </children>
+</AnchorPane>
