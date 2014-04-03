@@ -19,13 +19,12 @@ package nl.elucidator.homeautomation.client.javafx.presentation;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 import nl.elucidator.homeautomation.client.javafx.boundry.EnergyUsage;
@@ -37,7 +36,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author adam-bien.com
@@ -49,11 +50,10 @@ public class EnergyPresenter implements Initializable {
     @FXML
     BarChart<String, Number> dayUsage;
     @FXML
-    CategoryAxis categoryAxis;
-    @FXML
-    NumberAxis numberAxis;
+    Button updateGraph;
     @Inject
     EnergyUsage energyUsage;
+
     private Timeline currentPowerTimeLine;
 
     public EnergyPresenter() {
@@ -61,12 +61,7 @@ public class EnergyPresenter implements Initializable {
     }
 
     private void createCurrentPowerTimeLine() {
-        currentPowerTimeLine = new Timeline(new KeyFrame(Duration.seconds(0), new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent actionEvent) {
-                currentPower.setText(getLatestPower());
-            }
-        }), new KeyFrame(Duration.seconds(10)));
+        currentPowerTimeLine = new Timeline(new KeyFrame(Duration.seconds(0), actionEvent -> currentPower.setText(getLatestPower())), new KeyFrame(Duration.seconds(10)));
         currentPowerTimeLine.setCycleCount(Animation.INDEFINITE);
         currentPowerTimeLine.play();
     }
@@ -84,8 +79,18 @@ public class EnergyPresenter implements Initializable {
 
     @Override
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
-
-        energyUsage.getWeekSeries().stream().forEach(el -> dayUsage.getData().add(el));
+        fillChart();
         createCurrentPowerTimeLine();
+    }
+
+    public void updateGraph() {
+        dayUsage.getData().clear();
+        fillChart();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void fillChart() {
+        CompletableFuture<List<XYChart.Series>> completableFuture = CompletableFuture.supplyAsync(energyUsage::getWeekSeries);
+        completableFuture.thenAccept(f -> Platform.runLater(() -> dayUsage.getData().addAll(f.toArray(new XYChart.Series[f.size()]))));
     }
 }

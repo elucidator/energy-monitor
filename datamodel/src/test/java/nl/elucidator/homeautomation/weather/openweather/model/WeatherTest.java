@@ -36,7 +36,5 @@ public class WeatherTest {
 
         weather.setTimeStamp(TIME_STAMP_B);
         String b = gsonService.toJsonTimeStamped(weather, "dt", "timeStamp");
-        System.out.println("a = " + a);
-        System.out.println("b = " + b);
     }
 }

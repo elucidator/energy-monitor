@@ -37,25 +37,24 @@ import java.util.stream.Collectors;
  */
 public class EnergyUsage {
 
+    //TODO Make configurable
     private static final String TODAY_URL = "http://localhost:8080/homeautomation/rest/client/power/usage/today";
     private static final String DAY_URL = "http://localhost:8080/homeautomation/rest/client/power/usage/day/";
     private static final int DAYS_IN_WEEK = 7;
 
-
+    //TODO Make this parallel i.e. CompletableFuture
     public List<XYChart.Series> getWeekSeries() {
         List<XYChart.Series> result = new ArrayList<>();
-
-        XYChart.Series series = getThisWeek();
+        XYChart.Series series = getCurrentWeek();
         result.add(series);
 
-        result.addAll(getWeek(4));
-
+        result.addAll(getWeekSeries(4));
         return result;
     }
 
-    private List<XYChart.Series> getWeek(final int weeksAgo) {
+    private List<XYChart.Series> getWeekSeries(final int weeksAgo) {
         List<XYChart.Series> result = new ArrayList<>(weeksAgo);
-        int startDay = 0;
+        int startDay;
         for (int i = 1; i < weeksAgo; i++) {
             startDay = i * DAYS_IN_WEEK;
 
@@ -63,7 +62,6 @@ public class EnergyUsage {
             series.setName("Week " + getWeekNumber(LocalDate.now().minusDays(startDay)));
             final ObservableList seriesData = series.getData();
             final List<Usage> usageList = getUsage(7 + startDay, startDay);
-            System.out.println("usageList = " + usageList);
 
             seriesData.addAll(usageList.stream().map(usage -> new XYChart.Data(usage.day, usage.power)).collect(Collectors.toList()));
             result.add(series);
@@ -72,13 +70,13 @@ public class EnergyUsage {
         return result;
     }
 
-    private XYChart.Series getThisWeek() {
+    private XYChart.Series getCurrentWeek() {
         XYChart.Series series = new XYChart.Series();
         series.setName("Week " + getWeekNumber(LocalDate.now()) + " (Current)");
         final ObservableList seriesData = series.getData();
         final List<Usage> usageList = getUsage(6, 0);
         LocalDate localDate = LocalDate.now();
-        usageList.add(new Usage(localDayOfWeek(localDate), getPowerToday()));
+        usageList.add(new Usage(localDayOfWeek(localDate), getToPowerCurrentDay()));
         seriesData.addAll(usageList.stream().map(usage -> new XYChart.Data(usage.day, usage.power)).collect(Collectors.toList()));
         return series;
     }
@@ -87,19 +85,16 @@ public class EnergyUsage {
         return date.query(temporal -> temporal.get(ChronoField.ALIGNED_WEEK_OF_YEAR));
     }
 
-
     private List<Usage> getUsage(final int start, final int end) {
         List<Usage> result = new ArrayList<>(start);
 
         LocalDate localDate = LocalDate.now();
-
 
         for (int i = start; i > end; i--) {
             final int toPower = getToPower(i);
             final String dayOfWeek = localDayOfWeek(localDate.minusDays(i));
             result.add(new Usage(dayOfWeek, toPower));
         }
-
 
         return result;
     }
@@ -109,18 +104,16 @@ public class EnergyUsage {
     }
 
     private int getToPower(final int day) {
-
-        final Client clientBuilder = ClientBuilder.newBuilder().build();
-        final WebTarget target = clientBuilder.target(DAY_URL + day);
-        final Response response = target.request(MediaType.TEXT_PLAIN).get();
-        final String responseData = response.readEntity(String.class);
-        response.close();
-        return Integer.parseInt(responseData);
+        return execute(DAY_URL + day);
     }
 
-    private int getPowerToday() {
+    private int getToPowerCurrentDay() {
+        return execute(TODAY_URL);
+    }
+
+    private int execute(final String uri) {
         final Client clientBuilder = ClientBuilder.newBuilder().build();
-        final WebTarget target = clientBuilder.target(TODAY_URL);
+        final WebTarget target = clientBuilder.target(uri);
         final Response response = target.request(MediaType.TEXT_PLAIN).get();
         final String responseData = response.readEntity(String.class);
         response.close();

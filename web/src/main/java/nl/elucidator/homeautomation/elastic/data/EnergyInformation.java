@@ -53,20 +53,16 @@ public class EnergyInformation {
         return this.getActualPowerHistogram(start, DateTime.now());
     }
 
-
     public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(DateTime start, DateTime end) {
         return getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
     }
 
     public double getLastEnergyAverage(final int periodInMinutes) {
         DateTime start = DateTime.now().minusMinutes(periodInMinutes);
-        System.out.println("start = " + start);
         DateTime end = DateTime.now();
-        System.out.println("end = " + end);
         final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, periodInMinutes + "m");
         return histogramEntries.get(0).getMean();
     }
-
 
     public String getLatestRecored() {
 
@@ -152,7 +148,6 @@ public class EnergyInformation {
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch("smartmeter").setQuery(
                 QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("timeStamp").from(atTime.minusSeconds(11)).to(atTime))
         ).setTypes("record");
-
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
         SearchHits searchHits = searchResponse.getHits();
