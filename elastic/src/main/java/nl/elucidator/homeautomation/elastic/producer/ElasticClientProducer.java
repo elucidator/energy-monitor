@@ -17,8 +17,13 @@
 package nl.elucidator.homeautomation.elastic.producer;
 
 import nl.elucidator.ee7.utilities.configuration.NamedProperty;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import javax.enterprise.inject.Produces;
@@ -28,6 +33,7 @@ import javax.inject.Inject;
  * Test cases
  */
 public class ElasticClientProducer {
+    private static final Logger LOGGER = LogManager.getLogger(ElasticClientProducer.class);
 
     @Inject
     @NamedProperty(key = "elastic.host")
@@ -36,10 +42,20 @@ public class ElasticClientProducer {
     @NamedProperty(key = "elastic.port")
     private int port;
 
+    private static TransportClient transportClient = null;
+
 
     @Produces
     public Client produceClient() {
-        return new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port));
+        if (transportClient == null) {
+            Settings settings = ImmutableSettings.settingsBuilder()
+                    .put("node.name", "elasticsearch")
+                    .build();
+            LOGGER.trace("Instantiating new Transport client");
+            transportClient = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(host, port));
+        }
+
+        return transportClient;
     }
 
 }

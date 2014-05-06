@@ -17,6 +17,8 @@
 package nl.elucidator.homeautomation.elastic.data;
 
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.search.facet.datehistogram.DateHistogramFacet;
 import org.joda.time.DateTime;
@@ -37,8 +39,12 @@ public class EnergyInformationTest {
 
     @Before
     public void before() {
+
         energyInformation = new EnergyInformation();
-        energyInformation.client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("192.168.1.142", 9300));
+        Settings settings = ImmutableSettings.settingsBuilder()
+                .put("node.name", "elasticsearch")
+                .build();
+        energyInformation.client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress("elastic.elucidator.nl", 81));
     }
 
     @Ignore
@@ -60,5 +66,29 @@ public class EnergyInformationTest {
     public void getLastEnergyAverage() {
         final double lastEnergyAverage = energyInformation.getLastEnergyAverage(10);
         System.out.println("lastEnergyAverage = " + lastEnergyAverage);
+    }
+
+    @Test
+    public void minPower() {
+        final DateTime untilTime = DateTime.now();
+        DateTime startTime = untilTime.minusDays(1);
+        final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
+        final double lowPower = energyInformation.lowPowerPeriod(fromTime, untilTime);
+        System.out.println("lowPowerPeriod = " + lowPower);
+    }
+
+    @Test
+    public void maxPower() {
+        final DateTime untilTime = DateTime.now();
+        DateTime startTime = untilTime.minusDays(1);
+        final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
+        final double maxPower = energyInformation.maxPowerPeriod(fromTime, untilTime);
+        System.out.println("maxPowerPeriod = " + maxPower);
+    }
+
+    @Test
+    public void averageToday() {
+        final double average = energyInformation.averageToday();
+        System.out.println("averagePeriod = " + average);
     }
 }

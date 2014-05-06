@@ -18,33 +18,42 @@
 <html>
 <head>
     <title>Home Automation, Dataminer</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-resource.js"></script>
+    <script src="lib/angular/angular-route.min.js"></script>
+    <script src="lib/ui-bootstrap-tpls-0.10.0.min.js"></script>
+    <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
+    <!--<script src="lib/Highcharts-3.0.10/js/highcharts-all.js"></script>-->
+    <!--<script src="lib/Highcharts-3.0.10/js/modules/exporting.js"></script>-->
+    <script src="lib/highcharts-ng.js"></script>
+    <script src="js/application.js"></script>
+    <script src="js/overviewcontroller.js"></script>
+    <script src="js/chartcontroller.js"></script>
+    <script src="js/tooncontroller.js"></script>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/energy-monitor.css">
 </head>
 <body ng-app="homeAutomationApp">
 
-<div ng-controller="mainController" class="container">
-    <ul>
-        <li ng-repeat="type in data_available">
-            {{type.name}}
-        </li>
+<div class="container">
+    <ul class="nav nav-tabs" ng-controller="TabsCtrl">
+        <li ng-class="tabClass(tab)" ng-repeat="tab in tabs" tab="tab"><a href="{{tab.link}}" ng-click="setSelectedTab(tab)">{{tab.label}}</a></li>
     </ul>
 
-    <!--<section id="notes" class="container">-->
-    <!--<button id="add-note" class="btn btn-primary" ng-click="addNote()">Add note</button>-->
-    <!--<article ng-repeat="note in notes" class="note">-->
-    <!--<h1><span class="title">{{ note.title }}</span>-->
-    <!--<button class="btn btn-danger" ng-click="remove(note)">-</button>-->
-    <!--</h1>-->
+    <div ng-view></div>
 
-    <!--<div class="summary">{{ note.summary }}</div>-->
-    <!--</article>-->
-    <!--</section>-->
+    <div id="footer" class="container">
+        <div class="container">
+            <p class="muted credit">Provided by <a href="http://www.elucidator.nl">Elucidator.NL</a></p>
+        </div>
+    </div>
+
 </div>
 
 
+
+
 </body>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-resource.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<script src="js/controller.js"></script>
+
 </html>

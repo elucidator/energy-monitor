@@ -29,11 +29,15 @@ import javax.ws.rs.core.MediaType;
  * JAX-WS endpoints
  */
 @Path("/client")
-public class ClientInterface {
+public class PowerUsageProvider {
 
     @Inject
     private EnergyInformation energyInformation;
 
+    /**
+     * Latest record
+     * @return record
+     */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/record/latest")
@@ -41,14 +45,44 @@ public class ClientInterface {
         return energyInformation.getLatestRecored();
     }
 
+    /**
+     * Get avarage for specified period
+     * @param period
+     * @return
+     */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("power/average/{period}")
-    public double energyAveragePeriod(final @PathParam("period") int period) {
+    @Path("power/average/{periodInMinutes}")
+    public double energyAveragePeriod(final @PathParam("periodInMinutes") int period) {
         return energyInformation.getLastEnergyAverage(period);
 
     }
 
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("power/maxpower/today")
+    public double getMaxPower() {
+        return energyInformation.maxPower();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("power/lowpower/today")
+    public double getMinPower() {
+        return energyInformation.lowPower();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("power/average/today")
+    public double getAverageTodayPower() {
+        return energyInformation.averageToday();
+    }
+
+    /**
+     * Usage for today, midnight until now
+     * @return usage in Wh
+     */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/power/usage/today")
@@ -56,6 +90,18 @@ public class ClientInterface {
         return energyInformation.getTodaysUsage();
     }
 
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/power/usage/history/day/{daysAgo}")
+    public int getPeriodDaysInHistory(@PathParam("daysAgo") final int daysAgo) {
+        return energyInformation.getUsageHistorySamePeriod(daysAgo);
+    }
+
+    /**
+     * Energy used in day (midnight to midnight)
+     * @param dayInHistory days ago
+     * @return Wh
+     */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/power/usage/day/{dayInHistory}")

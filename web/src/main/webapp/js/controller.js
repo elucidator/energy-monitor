@@ -14,16 +14,89 @@
  * limitations under the License.
  */
 
-/**
- * Created by pieter on 3/7/14.
- */
-var homeAutomationApp = angular.module('homeAutomationApp', []);
 
-homeAutomationApp.controller('mainController', function ($scope) {
-        $scope.data_available = [
-            { 'name': 'Weather'},
-            { 'name': 'Power'},
-            { 'name': 'Gas'}
-        ];
+homeAutomationApp.controller('mainController', function ($scope, $http, $timeout) {
+
+        $scope.dmsrData = null;
+        $scope.totalEnergyToday = 0;
+        $scope.totalEnergyYesterday = 0;
+        $scope.percentageYesterday = 0;
+        $scope.totalEnergyLastWeek = 0;
+        $scope.percentageLastWeek = 0;
+
+        $scope.getLatestRecord = function () {
+            $http.get('rest/client/record/latest')
+                .success(function (dmsr, status, headers, config) {
+                    $scope.dmsrData = dmsr;
+                    return dmsr;
+                })
+        };
+
+        $scope.getTotalUsedToday = function () {
+            $http.get('rest/client/power/usage/today')
+                .success(function (usage) {
+                    $scope.totalEnergyToday = usage;
+                })
+        }
+
+        $scope.getUsageYesterday = function () {
+            $http.get('rest/client/power/usage/day/1')
+                .success(function (usage) {
+                    $scope.totalEnergyYesterday = usage;
+                })
+        }
+
+        $scope.getUsageWeekAgo = function () {
+            $http.get('rest/client/power/usage/history/day/7')
+                .success(function (usage) {
+                    $scope.totalEnergyLastWeek = usage;
+                })
+        }
+
+        $scope.percentages = function () {
+            $scope.percentageLastWeek = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyLastWeek);
+            $scope.percentageYesterday = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyYesterday);
+        }
+
+        $scope.percentage = function (current, previous) {
+            console.log("Processing current:" + current + " previous: " + previous);
+            var result = "0";
+            if (current > previous) {
+                var x = 1 - ((current / previous));
+                console.log(x);
+                result = parseFloat(x * 100).toFixed(2);
+            } else {
+                var y = 1 - ((previous / current));
+                console.log(y);
+                result = parseFloat(y * 100).toFixed(2);
+            }
+
+            console.log("Result: " + result);
+            return result;
+        }
+
+
+        // Function to replicate setInterval using $timeout service.
+        $scope.intervalFunction = function () {
+            $timeout(function () {
+                $scope.getLatestRecord();
+                $scope.getTotalUsedToday();
+                $scope.getUsageWeekAgo();
+                $scope.percentages();
+                $scope.intervalFunction();
+            }, 10000)
+        };
+
+
+        //Initialize
+        $scope.getLatestRecord();
+        $scope.getTotalUsedToday();
+        $scope.getUsageYesterday();
+        $scope.getUsageWeekAgo();
+        $scope.percentages();
+        // Kick off the interval
+        $scope.intervalFunction();
+
+
     }
 );

@@ -49,14 +49,54 @@ public class EnergyInformation {
     @Inject
     Client client;
 
-    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(DateTime start) {
+    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start) {
         return this.getActualPowerHistogram(start, DateTime.now());
     }
 
-    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(DateTime start, DateTime end) {
+    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start, final DateTime end) {
         return getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
     }
 
+    public double averageToday() {
+        final DateTime untilTime = DateTime.now();
+        DateTime startTime = untilTime.minusDays(1);
+        final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
+        return averagePeriod(fromTime, untilTime);
+    }
+
+    public double averagePeriod(final DateTime fromTime, final DateTime untilTime) {
+        final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
+        return histogramEntries.stream().mapToDouble(entry -> entry.getMean()).sum() / histogramEntries.size();
+    }
+
+    public double lowPower() {
+        final DateTime untilTime = DateTime.now();
+        DateTime startTime = untilTime.minusDays(1);
+        final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
+        return lowPowerPeriod(fromTime, startTime);
+    }
+    public double lowPowerPeriod(final DateTime fromTime, final DateTime untilTime) {
+        final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
+        return histogramEntries.stream().mapToDouble(entry -> entry.getMin()).min().getAsDouble();
+    }
+
+    public double maxPower() {
+        final DateTime untilTime = DateTime.now();
+        DateTime startTime = untilTime.minusDays(1);
+        final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
+        return maxPowerPeriod(fromTime, startTime);
+    }
+
+    public double maxPowerPeriod(final DateTime fromTime, final DateTime untilTime) {
+        final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
+        return histogramEntries.stream().mapToDouble(entry -> entry.getMin()).max().getAsDouble();
+    }
+
+    /**
+     *
+     * @param periodInMinutes
+     * @return
+     */
     public double getLastEnergyAverage(final int periodInMinutes) {
         DateTime start = DateTime.now().minusMinutes(periodInMinutes);
         DateTime end = DateTime.now();
@@ -81,13 +121,13 @@ public class EnergyInformation {
         return hit.sourceAsString();
     }
 
-    private List<? extends DateHistogramFacet.Entry> getHistogramEntries(final String index, final DateTime start, final DateTime end, final String valueField, final String interval) {
+    private List<? extends DateHistogramFacet.Entry> getHistogramEntries(final String index, final DateTime fromTime, final DateTime untilTime, final String valueField, final String interval) {
 
         DateHistogramFacetBuilder facet = FacetBuilders.dateHistogramFacet(FACET_NAME).keyField(DataConstants.TIME_STAMP).valueField(valueField).interval(interval);
 
         BoolFilterBuilder topLevelFilterBuilder = FilterBuilders.boolFilter();
 
-        RangeFilterBuilder rangeFilterBuilder = new RangeFilterBuilder(DataConstants.TIME_STAMP).from(start.getMillis()).to(end.getMillis());
+        RangeFilterBuilder rangeFilterBuilder = new RangeFilterBuilder(DataConstants.TIME_STAMP).from(fromTime.getMillis()).to(untilTime.getMillis());
         FilterBuilder matchAllQueryBuilder = FilterBuilders.matchAllFilter();
 
         topLevelFilterBuilder.must(matchAllQueryBuilder, rangeFilterBuilder);
@@ -110,25 +150,32 @@ public class EnergyInformation {
     }
 
     public int getTodaysUsage() {
-        DateTime queryTime = DateTime.now();
-        Optional<ElectricityData> latestRecordOptional = recordAtTime(queryTime);
-        DateTime midnight = new DateTime(queryTime.getYear(), queryTime.getMonthOfYear(), queryTime.getDayOfMonth(), 0, 0, 0);
-        Optional<ElectricityData> midnightRecord = recordAtTime(midnight);
+        DateTime untilTime = DateTime.now();
+        DateTime fromTime = new DateTime(untilTime.getYear(), untilTime.getMonthOfYear(), untilTime.getDayOfMonth(), 0, 0, 0);
 
-        return getDayUsage(midnight, queryTime);
+        return getDayUsage(fromTime, untilTime);
     }
 
     public int getDayUsage(final int dayInHistory) {
         DateTime startDayFull = DateTime.now().minusDays(dayInHistory);
-        DateTime startDay = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), 0, 0, 0);
-        DateTime endDay = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), 23, 59, 59);
+        DateTime fromTime = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), 0, 0, 0);
+        DateTime untilTime = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), 23, 59, 59);
 
-        return getDayUsage(startDay, endDay);
+        return getDayUsage(fromTime, untilTime);
+    }
+
+    public int getUsageHistorySamePeriod(final int dayInHistory) {
+        DateTime startDayFull = DateTime.now().minusDays(dayInHistory);
+        DateTime fromTime = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), 0, 0, 0);
+        DateTime untilTime = new DateTime(startDayFull.getYear(), startDayFull.getMonthOfYear(), startDayFull.getDayOfMonth(), startDayFull.getHourOfDay(), startDayFull.getMinuteOfHour(), startDayFull.getSecondOfMinute());
+        return getDayUsage(fromTime, untilTime);
     }
 
     private int getDayUsage(final DateTime from, final DateTime until) {
         final Optional<ElectricityData> fromRecord = recordAtTime(from);
         final Optional<ElectricityData> untilRecord = recordAtTime(until);
+
+        LOGGER.trace("Reading record for period: {} until: {}", from, until);
 
         if (fromRecord.isPresent() && untilRecord.isPresent()) {
 

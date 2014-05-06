@@ -16,8 +16,12 @@
 
 package nl.elucidator.homeautomation.web.application;
 
+import nl.elucidator.homeautomation.web.providers.TimeBasedXAxisChartResponse;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * JAX-WS Application

@@ -24,4 +24,5 @@ public interface DataConstants {
     String ELECTRICITY_DATA_ACTUAL_POWER = "electricityData.actualPower";
     String INDEX_SMARTMETER = "smartmeter";
     String INTERVAL_ONE_HOUR = "1h";
+    String INTERVAL_10_MINUTES = "10m";
 }
