@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.producers;
+package nl.elucidator.homeautomation.web.gson.converters;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
+import nl.elucidator.homeautomation.web.gson.converters.timebased.TimeBasedConverter;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -29,11 +30,12 @@ import java.util.List;
  */
 public class GsonProducerFactoryTest {
 
-    GsonProducerFactory factory = new GsonProducerFactory();
+    TimeBasedConverter factory = new TimeBasedConverter();
+
     @Test
     public void simple() {
         List<EnergyChartData> chartData = new ArrayList<>();
-        for(int i=1;i<10;i++) {
+        for (int i = 1; i < 10; i++) {
             chartData.add(new EnergyChartData(DateTime.now(), i));
 
         }

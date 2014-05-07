@@ -62,7 +62,6 @@ public class EnergyUsage {
             series.setName("Week " + getWeekNumber(LocalDate.now().minusDays(startDay)));
             final ObservableList seriesData = series.getData();
             final List<Usage> usageList = getUsage(7 + startDay, startDay);
-
             seriesData.addAll(usageList.stream().map(usage -> new XYChart.Data(usage.day, usage.power)).collect(Collectors.toList()));
             result.add(series);
         }

@@ -14,27 +14,10 @@
  * limitations under the License.
  */
 
-var toonViewControllers = angular.module('toonViewControllers', []);
-
-toonViewControllers.directive('digitalClock', function($interval) {
-    return {
-        restrict: 'E',
-        scope: {},
-        template: '<div ng-bind="now | date:\'HH:mm:ss\'"></div>',
-        link: function (scope) {
-            Console.log("Link Activated");
-            scope.now = new Date();
-            var clockTimer = $interval(function() {
-                scope.now = new Date();
-            }, 1000);
-
-            scope.$on('$destroy', function(){
-                Console.log("Destroy Called");
-                $interval.cancel(clockTimer);
-            });
-        }
-    };
-});
+/*
+ See http://jsfiddle.net/EVRpj/ for chart
+ */
+var toonViewControllers = angular.module('toonViewControllers', ['directives', 'highcharts-ng']);
 
 toonViewControllers.controller('mainToonController', function ($scope, $http, $timeout) {
 
@@ -50,6 +33,7 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
         $scope.costLow = 0;
         $scope.costAverage = 0;
         var kwPrice = 0.23;
+        $scope.chartSeries = [];
 
         $scope.getLatestRecord = function () {
             $http.get('rest/client/record/latest')
@@ -64,26 +48,26 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
                 .success(function (usage) {
                     $scope.totalEnergyToday = usage;
                 })
-        }
+        };
 
         $scope.getUsageYesterday = function () {
             $http.get('rest/client/power/usage/day/1')
                 .success(function (usage) {
                     $scope.totalEnergyYesterday = usage;
                 })
-        }
+        };
 
         $scope.getUsageWeekAgo = function () {
             $http.get('rest/client/power/usage/history/day/7')
                 .success(function (usage) {
                     $scope.totalEnergyLastWeek = usage;
                 })
-        }
+        };
 
         $scope.percentages = function () {
             $scope.percentageLastWeek = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyLastWeek);
             $scope.percentageYesterday = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyYesterday);
-        }
+        };
 
         $scope.percentage = function (current, previous) {
             var result;
@@ -94,30 +78,30 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
                 return '--';
             }
             return result;
-        }
+        };
 
-        $scope.getLowPower = function() {
+        $scope.getLowPower = function () {
             $http.get('rest/client/power/lowpower/today')
                 .success(function (usage) {
                     $scope.lowPower = usage;
-                    $scope.costLow = parseFloat(((usage * 24 * 365)/1000) * kwPrice).toFixed(2);
+                    $scope.costLow = parseFloat(((usage * 24 * 365) / 1000) * kwPrice).toFixed(2);
                 })
-        }
+        };
 
-        $scope.getMaxPower = function() {
+        $scope.getMaxPower = function () {
             $http.get('rest/client/power/maxpower/today')
                 .success(function (usage) {
                     $scope.maxPower = usage;
                 })
-        }
+        };
 
-        $scope.getAverageToday = function() {
+        $scope.getAverageToday = function () {
             $http.get('rest/client/power/average/today')
                 .success(function (usage) {
                     $scope.averageToday = parseFloat(usage).toFixed(1);
-                    $scope.costAverage = parseFloat(((usage * 24 * 365)/1000) * kwPrice).toFixed(2);
+                    $scope.costAverage = parseFloat(((usage * 24 * 365) / 1000) * kwPrice).toFixed(2);
                 })
-        }
+        };
 
 
         // Function to replicate setInterval using $timeout service.
@@ -135,6 +119,21 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
         };
 
 
+        $scope.addSeries = function (serie) {
+            $scope.chartSeries.push(serie);
+        };
+
+        $scope.loadData = function () {
+//            $scope.columnChart.loading = true;
+            $http.get('rest/provider/chart/histogram/today?interval=1h')
+                .success(function (series) {
+                    $scope.addSeries(series);
+                });
+
+//            $scope.columnChart.loading = false;
+        };
+
+
         //Initialize
         $scope.getLatestRecord();
         $scope.getTotalUsedToday();
@@ -146,7 +145,43 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
         $scope.getAverageToday();
         // Kick off the interval
         $scope.intervalFunction();
+        $scope.loadData();
 
 
+        $scope.columnChart = {
+            options: {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Energy consumption per hour'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'W/h',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+                    plotBands: {
+                        color: '#87FA73',
+                        from: '150', // Start of the plot band
+                        to: '350' // End of the plot band
+                    }
+                },
+
+                credits: {
+                    enabled: false
+                },
+                exporting: { enabled: false },
+                legend: {
+                    enabled: false
+                }
+            },
+            series: $scope.chartSeries
+        };
     }
 );

@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.producers;
+package nl.elucidator.homeautomation.web.gson.converters.timebased;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
-
-import javax.ejb.Singleton;
+import nl.elucidator.homeautomation.web.gson.converters.ChartSeriesConverter;
 
 /**
  * Class GsonProducerFactory.
  */
-@Singleton
-public class GsonProducerFactory {
+public class TimeBasedConverter {
     private final Gson gson;
 
-    public GsonProducerFactory() {
+    public TimeBasedConverter() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(ChartSeries.class, new ChartSeriesConverter());
-        gsonBuilder.registerTypeAdapter(EnergyChartData.class, new EnergyChartDataConverter());
+        gsonBuilder.registerTypeAdapter(EnergyChartData.class, new EnergyChartDataTimeXAxisConverter());
         gson = gsonBuilder.create();
     }
 

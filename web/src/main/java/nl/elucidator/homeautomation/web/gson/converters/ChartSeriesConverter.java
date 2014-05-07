@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.producers;
+package nl.elucidator.homeautomation.web.gson.converters;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
-
 
 import java.lang.reflect.Type;
 
@@ -33,6 +32,7 @@ public class ChartSeriesConverter implements JsonSerializer<ChartSeries> {
     private static final String NAME = "name";
     private static final String CONNECT_NULLS = "connectNulls";
     private static final String DATA = "data";
+
     @Override
     public JsonElement serialize(final ChartSeries src, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();

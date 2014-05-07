@@ -49,12 +49,12 @@ public class EnergyInformation {
     @Inject
     Client client;
 
-    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start) {
+    public List<DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start) {
         return this.getActualPowerHistogram(start, DateTime.now());
     }
 
-    public List<? extends DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start, final DateTime end) {
-        return getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
+    public List<DateHistogramFacet.Entry> getActualPowerHistogram(final DateTime start, final DateTime end) {
+        return (List<DateHistogramFacet.Entry>) getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
     }
 
     public double averageToday() {
@@ -66,7 +66,7 @@ public class EnergyInformation {
 
     public double averagePeriod(final DateTime fromTime, final DateTime untilTime) {
         final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
-        return histogramEntries.stream().mapToDouble(entry -> entry.getMean()).sum() / histogramEntries.size();
+        return histogramEntries.stream().mapToDouble(DateHistogramFacet.Entry::getMean).sum() / histogramEntries.size();
     }
 
     public double lowPower() {
@@ -75,9 +75,10 @@ public class EnergyInformation {
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
         return lowPowerPeriod(fromTime, startTime);
     }
+
     public double lowPowerPeriod(final DateTime fromTime, final DateTime untilTime) {
         final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
-        return histogramEntries.stream().mapToDouble(entry -> entry.getMin()).min().getAsDouble();
+        return histogramEntries.stream().mapToDouble(DateHistogramFacet.Entry::getMin).min().getAsDouble();
     }
 
     public double maxPower() {
@@ -89,11 +90,10 @@ public class EnergyInformation {
 
     public double maxPowerPeriod(final DateTime fromTime, final DateTime untilTime) {
         final List<? extends DateHistogramFacet.Entry> histogramEntries = getHistogramEntries(DataConstants.INDEX_SMARTMETER, fromTime, untilTime, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_10_MINUTES);
-        return histogramEntries.stream().mapToDouble(entry -> entry.getMin()).max().getAsDouble();
+        return histogramEntries.stream().mapToDouble(DateHistogramFacet.Entry::getMin).max().getAsDouble();
     }
 
     /**
-     *
      * @param periodInMinutes
      * @return
      */

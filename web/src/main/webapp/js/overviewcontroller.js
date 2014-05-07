@@ -40,26 +40,26 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
                 .success(function (usage) {
                     $scope.totalEnergyToday = usage;
                 })
-        }
+        };
 
         $scope.getUsageYesterday = function () {
             $http.get('rest/client/power/usage/day/1')
                 .success(function (usage) {
                     $scope.totalEnergyYesterday = usage;
                 })
-        }
+        };
 
         $scope.getUsageWeekAgo = function () {
             $http.get('rest/client/power/usage/history/day/7')
                 .success(function (usage) {
                     $scope.totalEnergyLastWeek = usage;
                 })
-        }
+        };
 
         $scope.percentages = function () {
             $scope.percentageLastWeek = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyLastWeek);
             $scope.percentageYesterday = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyYesterday);
-        }
+        };
 
         $scope.percentage = function (current, previous) {
             var result;
@@ -70,28 +70,28 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
                 return '--';
             }
             return result;
-        }
+        };
 
-        $scope.getLowPower = function() {
+        $scope.getLowPower = function () {
             $http.get('rest/client/power/lowpower/today')
                 .success(function (usage) {
                     $scope.lowPower = usage;
                 })
-        }
+        };
 
-        $scope.getMaxPower = function() {
+        $scope.getMaxPower = function () {
             $http.get('rest/client/power/maxpower/today')
                 .success(function (usage) {
                     $scope.maxPower = usage;
                 })
-        }
+        };
 
-        $scope.getAverageToday = function() {
+        $scope.getAverageToday = function () {
             $http.get('rest/client/power/average/today')
                 .success(function (usage) {
                     $scope.averageToday = parseFloat(usage).toFixed(1);
                 })
-        }
+        };
 
 
         // Function to replicate setInterval using $timeout service.
@@ -120,7 +120,5 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
         $scope.getAverageToday();
         // Kick off the interval
         $scope.intervalFunction();
-
-
     }
 );

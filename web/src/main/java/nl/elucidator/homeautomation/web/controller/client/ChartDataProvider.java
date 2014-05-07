@@ -18,7 +18,6 @@ package nl.elucidator.homeautomation.web.controller.client;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 import nl.elucidator.homeautomation.elastic.data.EnergyChartDataRetriever;
-import nl.elucidator.homeautomation.web.gson.producers.GsonProducerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -30,31 +29,38 @@ import java.util.ArrayList;
  */
 @Path("/provider/chart")
 public class ChartDataProvider {
+    private static final String TIME_BASED = "time";
 
     @Inject
     EnergyChartDataRetriever retriever;
-    @Inject
-    GsonProducerFactory gsonProducer;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/histogram/today")
-    public String getToday(final @DefaultValue("false")@QueryParam("summing") boolean summing, final @DefaultValue("10m") @QueryParam("interval") String interval) {
+    public ChartSeries getToday(final @DefaultValue("false") @QueryParam("summing") boolean summing, final @DefaultValue("10m") @QueryParam("interval") String interval, final @DefaultValue("time") @QueryParam("base") String base) {
         final ArrayList<EnergyChartData> chartForToday = retriever.getChartForToday(summing, interval);
         final String chartIdentifierName = getChartIdentifierName(chartForToday);
-        return gsonProducer.toJson(new ChartSeries(chartIdentifierName, chartForToday));
+        if (TIME_BASED.equals(base)) {
+            return new TimeBasedChartSeries(chartIdentifierName, chartForToday);
+        }
+        return new ValueBasedChartSeries(chartIdentifierName, chartForToday);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/histogram/history/{days}")
-    public String getDaysInHistory(@PathParam("days") final int days, @DefaultValue("false") @QueryParam("summing") boolean summing, final @DefaultValue("10m") @QueryParam("interval") String interval) {
+    public ChartSeries getDaysInHistory(@PathParam("days") final int days, @DefaultValue("false") @QueryParam("summing") boolean summing, final @DefaultValue("10m") @QueryParam("interval") String interval, final @DefaultValue("time") @QueryParam("base") String base) {
         final ArrayList<EnergyChartData> chartForToday = retriever.getHistoryDay(days, summing, interval);
         final String chartIdentifierName = getChartIdentifierName(chartForToday);
 
-        final ChartSeries energyChartDataChartSeries = new ChartSeries(chartIdentifierName, chartForToday);
+        ChartSeries energyChartDataChartSeries;
+        if (TIME_BASED.equals(base)) {
+            energyChartDataChartSeries = new TimeBasedChartSeries(chartIdentifierName, chartForToday);
+        } else {
+            energyChartDataChartSeries = new ValueBasedChartSeries(chartIdentifierName, chartForToday);
+        }
         energyChartDataChartSeries.normalize();
-        return gsonProducer.toJson(energyChartDataChartSeries);
+        return energyChartDataChartSeries;
     }
 
     private String getChartIdentifierName(final ArrayList<EnergyChartData> chartForToday) {

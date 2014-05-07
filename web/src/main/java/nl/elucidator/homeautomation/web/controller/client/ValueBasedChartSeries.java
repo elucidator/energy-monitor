@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.application;
+package nl.elucidator.homeautomation.web.controller.client;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
+
+import java.util.List;
 
 /**
- * JAX-WS Application
+ * Class ValueBasedChartSeries.
  */
-@ApplicationPath("rest")
-public class SmartEnergyApplication extends Application {
-
+public class ValueBasedChartSeries extends ChartSeries {
+    public ValueBasedChartSeries(final String name, final List<EnergyChartData> seriesData) {
+        super(name, seriesData);
+    }
 }

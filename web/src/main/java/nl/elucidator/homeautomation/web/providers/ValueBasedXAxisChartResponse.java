@@ -16,8 +16,8 @@
 
 package nl.elucidator.homeautomation.web.providers;
 
-import nl.elucidator.homeautomation.web.controller.client.TimeBasedChartSeries;
-import nl.elucidator.homeautomation.web.gson.converters.timebased.TimeBasedConverter;
+import nl.elucidator.homeautomation.web.controller.client.ValueBasedChartSeries;
+import nl.elucidator.homeautomation.web.gson.converters.valuebased.ValueBasedConverter;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -35,22 +35,22 @@ import java.lang.reflect.Type;
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public class TimeBasedXAxisChartResponse implements MessageBodyWriter<TimeBasedChartSeries> {
+public class ValueBasedXAxisChartResponse implements MessageBodyWriter<ValueBasedChartSeries> {
 
-    private TimeBasedConverter gsonProducer = new TimeBasedConverter();
+    private ValueBasedConverter gsonProducer = new ValueBasedConverter();
 
     @Override
     public boolean isWriteable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-        return TimeBasedChartSeries.class.isAssignableFrom(type);
+        return ValueBasedChartSeries.class.isAssignableFrom(type);
     }
 
     @Override
-    public long getSize(final TimeBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
+    public long getSize(final ValueBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
         return -1;
     }
 
     @Override
-    public void writeTo(final TimeBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException, WebApplicationException {
+    public void writeTo(final ValueBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException, WebApplicationException {
         entityStream.write(gsonProducer.toJson(chartSeries).getBytes());
     }
 }
