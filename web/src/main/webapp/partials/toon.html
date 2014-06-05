@@ -13,19 +13,24 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <table class="table table-bordered">
     <tbody>
     <tr>
         <td width="50%">
             <dt>Average power today:</dt>
-            <dd class="lcd_bold">{{averageToday}} W</dd>
+            <dd class="lcd_bold">
+                <em-average-power-today/>
+            </dd>
             <dd>Cost per year: &euro; {{costAverage}}</dd>
             <dt>Minimal Power today:</dt>
-            <dd class="lcd_bold">{{lowPower}} W</dd>
+            <dd class="lcd_bold">
+                <em_minimal_power_today/>
+            </dd>
             <dd>Cost per year: &euro; {{costLow}}</dd>
         </td>
         <td width="50%">
-            <digital-clock/>
+            <em-digital-clock/>
         </td>
     </tr>
     <tr>
@@ -38,3 +43,8 @@
     </tbody>
     <tr></tr>
 </table>
+djasjdasdjlkajdjasd
+das
+
+My Directive:
+<em-average-power-today/>

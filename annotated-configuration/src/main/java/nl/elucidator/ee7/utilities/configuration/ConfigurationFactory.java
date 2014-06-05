@@ -40,7 +40,8 @@ public class ConfigurationFactory {
 
     private static final String APPLICATION_PROPERTIES = "application.properties";
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationFactory.class);
-    @Resource(name = "applicationConfiguration")
+    private static final String APPLICATION_CONFIGURATION = "applicationConfiguration";
+    @Resource(name = APPLICATION_CONFIGURATION)
     Object applicationConfiguration;
     private Properties configData;
 
@@ -54,7 +55,7 @@ public class ConfigurationFactory {
                 return;
             }
             configData =
-                    loadDefault();
+                    loadDefaultFromClassPath();
         } catch (IOException e) {
             LOGGER.error("Error loading properties. " + e.getMessage());
         }
@@ -80,7 +81,7 @@ public class ConfigurationFactory {
      *
      * @return properties
      */
-    private Properties loadDefault() throws IOException {
+    private Properties loadDefaultFromClassPath() throws IOException {
         LOGGER.info("Loading default properties from classpath " + APPLICATION_PROPERTIES);
         Properties properties = new Properties();
         try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(
