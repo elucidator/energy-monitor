@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.providers;
+package nl.elucidator.homeautomation.message_writers;
 
-import nl.elucidator.homeautomation.web.controller.client.TimeBasedChartSeries;
-import nl.elucidator.homeautomation.web.gson.converters.timebased.TimeBasedConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import nl.elucidator.homeautomation.elastic.data.SimpleValue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -35,22 +38,25 @@ import java.lang.reflect.Type;
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
-public class TimeBasedXAxisChartResponse implements MessageBodyWriter<TimeBasedChartSeries> {
+public class SimpleValueConverter implements MessageBodyWriter<SimpleValue> {
+    private static final Logger LOGGER = LogManager.getLogger(SimpleValueConverter.class);
 
-    private TimeBasedConverter gsonProducer = new TimeBasedConverter();
+    private final Gson gson = new GsonBuilder().create();
 
     @Override
     public boolean isWriteable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-        return TimeBasedChartSeries.class.isAssignableFrom(type);
+        return SimpleValue.class.isAssignableFrom(type);
     }
 
     @Override
-    public long getSize(final TimeBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
+    public long getSize(final SimpleValue data, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
         return -1;
     }
 
     @Override
-    public void writeTo(final TimeBasedChartSeries chartSeries, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException, WebApplicationException {
-        entityStream.write(gsonProducer.toJson(chartSeries).getBytes());
+    public void writeTo(final SimpleValue data, final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders, final OutputStream entityStream) throws IOException, WebApplicationException {
+        final String s = gson.toJson(data);
+        LOGGER.info("JSON Simplevalue = " + s);
+        entityStream.write(gson.toJson(data).getBytes());
     }
 }

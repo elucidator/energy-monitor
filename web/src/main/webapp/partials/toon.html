@@ -20,16 +20,19 @@
         <td width="50%">
             <dt>Average power today:</dt>
             <dd class="lcd_bold">
-                <em-average-power-today/>
-                W
+                <em-power-today-average/>
             </dd>
-            <dd>Cost per year: &euro; {{costAverage}}</dd>
+            <dd>Cost per year: &euro;
+                <em-power-cost-average/>
+            </dd>
+
             <dt>Minimal Power today:</dt>
             <dd class="lcd_bold">
-                <em_minimal_power_today/>
-                W
+                <em_power_today_low/>
             </dd>
-            <dd>Cost per year: &euro; {{costLow}}</dd>
+            <dd>Cost per year: &euro;
+                <em-power-cost-low/>
+            </dd>
         </td>
         <td width="50%">
             <em-digital-clock/>
@@ -45,3 +48,4 @@
     </tbody>
     <tr></tr>
 </table>
+

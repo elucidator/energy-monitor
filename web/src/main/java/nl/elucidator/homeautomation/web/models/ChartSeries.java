@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.controller.client;
+package nl.elucidator.homeautomation.web.models;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 import org.joda.time.DateTime;
@@ -48,7 +48,7 @@ public class ChartSeries {
 
     }
 
-    private final DateTime normalize(final DateTime dateTime, final int year, final int month, final int day) {
+    private DateTime normalize(final DateTime dateTime, final int year, final int month, final int day) {
         return new DateTime(year, month, day, dateTime.getHourOfDay(), dateTime.getMinuteOfHour(), dateTime.getSecondOfMinute());
     }
 

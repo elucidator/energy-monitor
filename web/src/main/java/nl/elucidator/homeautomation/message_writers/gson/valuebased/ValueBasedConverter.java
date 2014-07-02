@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.converters.valuebased;
+package nl.elucidator.homeautomation.message_writers.gson.valuebased;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
-import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
-import nl.elucidator.homeautomation.web.gson.converters.ChartSeriesConverter;
+import nl.elucidator.homeautomation.message_writers.gson.ChartSeriesConverter;
+import nl.elucidator.homeautomation.web.models.ChartSeries;
 
 /**
  * Class GsonProducerFactory.

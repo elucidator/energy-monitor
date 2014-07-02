@@ -18,6 +18,9 @@ package nl.elucidator.homeautomation.web.controller.client;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 import nl.elucidator.homeautomation.elastic.data.EnergyChartDataRetriever;
+import nl.elucidator.homeautomation.web.models.ChartSeries;
+import nl.elucidator.homeautomation.web.models.TimeBasedChartSeries;
+import nl.elucidator.homeautomation.web.models.ValueBasedChartSeries;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

@@ -17,8 +17,8 @@
 package nl.elucidator.homeautomation.web.gson.converters;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
-import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
-import nl.elucidator.homeautomation.web.gson.converters.timebased.TimeBasedConverter;
+import nl.elucidator.homeautomation.message_writers.gson.timebased.TimeBasedConverter;
+import nl.elucidator.homeautomation.web.models.ChartSeries;
 import org.joda.time.DateTime;
 import org.junit.Test;
 

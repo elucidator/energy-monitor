@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.providers;
+package nl.elucidator.homeautomation.mappers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 
 /**
  * Class ApplicationExceptionMapper.
  */
-//@Provider
 public class ApplicationExceptionMapper implements ExceptionMapper<Throwable> {
     private static final Logger LOGGER = LogManager.getLogger(ApplicationExceptionMapper.class);
+
     @Override
     public Response toResponse(final Throwable exception) {
         LOGGER.error("Throwable caught: {}", exception.getMessage());

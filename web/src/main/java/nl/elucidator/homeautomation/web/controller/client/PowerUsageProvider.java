@@ -36,6 +36,7 @@ public class PowerUsageProvider {
 
     /**
      * Latest record
+     *
      * @return record
      */
     @GET
@@ -47,6 +48,7 @@ public class PowerUsageProvider {
 
     /**
      * Get avarage for specified period
+     *
      * @param period
      * @return
      */
@@ -60,38 +62,6 @@ public class PowerUsageProvider {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("power/maxpower/today")
-    public double getMaxPower() {
-        return energyInformation.maxPower();
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Path("power/lowpower/today")
-    public double getMinPower() {
-        return energyInformation.lowPower();
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Path("power/average/today")
-    public double getAverageTodayPower() {
-        return energyInformation.averageToday();
-    }
-
-    /**
-     * Usage for today, midnight until now
-     * @return usage in Wh
-     */
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Path("/power/usage/today")
-    public int getToday() {
-        return energyInformation.getTodaysUsage();
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
     @Path("/power/usage/history/day/{daysAgo}")
     public int getPeriodDaysInHistory(@PathParam("daysAgo") final int daysAgo) {
         return energyInformation.getUsageHistorySamePeriod(daysAgo);
@@ -99,6 +69,7 @@ public class PowerUsageProvider {
 
     /**
      * Energy used in day (midnight to midnight)
+     *
      * @param dayInHistory days ago
      * @return Wh
      */

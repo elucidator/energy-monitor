@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.controller.client;
+package nl.elucidator.homeautomation.web.models;
 
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
 
 import java.util.List;
 
 /**
- * Class ValueBasedChartSeries.
+ * Class TimeBasedChartSeries.
  */
-public class ValueBasedChartSeries extends ChartSeries {
-    public ValueBasedChartSeries(final String name, final List<EnergyChartData> seriesData) {
+public class TimeBasedChartSeries extends ChartSeries {
+    public TimeBasedChartSeries(final String name, final List<EnergyChartData> seriesData) {
         super(name, seriesData);
     }
 }

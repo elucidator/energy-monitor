@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
 
 /* App Module */
@@ -22,7 +23,6 @@ var homeAutomationApp = angular.module('homeAutomationApp', [
     'overViewControllers',
     'chartControllers',
     'toonViewControllers'
-
 ]);
 
 homeAutomationApp.config(['$routeProvider',
@@ -59,7 +59,7 @@ function TabsCtrl($scope, $location) {
     $scope.selectedTab = $scope.tabs[0];
     $scope.setSelectedTab = function (tab) {
         $scope.selectedTab = tab;
-    }
+    };
 
     $scope.tabClass = function (tab) {
         if ($scope.selectedTab == tab) {

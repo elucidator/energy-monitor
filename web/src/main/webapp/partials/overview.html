@@ -18,11 +18,17 @@
     <h2>Energy consumption overview</h2>
     <dl class="dl-horizontal">
         <dt>Average power today:</dt>
-        <dd class="lcd_bold">{{averageToday}} W</dd>
+        <dd class="lcd_bold">
+            <em-power-today-average/>
+        </dd>
         <dt>Minimal Power today:</dt>
-        <dd class="lcd_bold">{{lowPower}} W</dd>
+        <dd class="lcd_bold">
+            <em-power-today-low/>
+        </dd>
         <dt>Maximum Power today:</dt>
-        <dd class="lcd_bold">{{maxPower}} W</dd>
+        <dd class="lcd_bold">
+            <em-power-today-high/>
+        </dd>
     </dl>
     <table class="table table-hover" title="Energy">
         <tr>
@@ -56,9 +62,5 @@
         </tr>
 
     </table>
-
-    <!--<div id="container" style="width: 200px; height: 100px; margin: 0 auto">-->
-    <!--<highchart id="chart1" config="chartConfig"/>-->
-    <!--</div>-->
 
 </div>

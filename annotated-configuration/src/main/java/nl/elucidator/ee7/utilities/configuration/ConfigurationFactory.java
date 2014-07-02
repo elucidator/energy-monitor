@@ -97,7 +97,6 @@ public class ConfigurationFactory {
         return properties;
     }
 
-
     /**
      * Get a String property, named by the annotation {{@link NamedProperty}}
      *
@@ -131,6 +130,21 @@ public class ConfigurationFactory {
         String result = (propertyValue == null) ? getDefaultValue(point) : propertyValue;
         LOGGER.info("Property " + key + "=" + result);
         return Integer.parseInt(result);
+    }
+
+    public
+    @Produces
+    @NamedProperty
+    double getDouble(final InjectionPoint point) {
+        LOGGER.trace("Loading string for a Double property " + point);
+        String key = getKey(point);
+        String propertyValue = configData.getProperty(key);
+        if (propertyValue == null && isMandatory(point)) {
+            throw new IllegalArgumentException("nl.elucidator.homeautomation.configuration key: \"" + key + "\" missing but defined as mandatory.");
+        }
+        String result = (propertyValue == null) ? getDefaultValue(point) : propertyValue;
+        LOGGER.info("Property " + key + "=" + result);
+        return Double.parseDouble(result);
     }
 
     private String getKey(final InjectionPoint point) {

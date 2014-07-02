@@ -57,7 +57,7 @@ public class EnergyInformation {
         return (List<DateHistogramFacet.Entry>) getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
     }
 
-    public double averageToday() {
+    public double average() {
         final DateTime untilTime = DateTime.now();
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);

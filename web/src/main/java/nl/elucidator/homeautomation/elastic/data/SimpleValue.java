@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.controller.client;
-
-import nl.elucidator.homeautomation.elastic.data.EnergyChartData;
-
-import java.util.List;
+package nl.elucidator.homeautomation.elastic.data;
 
 /**
- * Class TimeBasedChartSeries.
+ * Class SimpleValue.
  */
-public class TimeBasedChartSeries extends ChartSeries {
-    public TimeBasedChartSeries(final String name, final List<EnergyChartData> seriesData) {
-        super(name, seriesData);
+public class SimpleValue<T> {
+    T value;
+
+    public SimpleValue(final T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return value;
     }
 }

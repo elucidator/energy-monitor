@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.converters.valuebased;
+package nl.elucidator.homeautomation.message_writers.gson.valuebased;
 
 import com.google.gson.*;
 import nl.elucidator.homeautomation.elastic.data.EnergyChartData;

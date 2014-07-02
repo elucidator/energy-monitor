@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.providers;
+package nl.elucidator.homeautomation.message_writers;
 
-import nl.elucidator.homeautomation.web.controller.client.ValueBasedChartSeries;
-import nl.elucidator.homeautomation.web.gson.converters.valuebased.ValueBasedConverter;
+import nl.elucidator.homeautomation.message_writers.gson.valuebased.ValueBasedConverter;
+import nl.elucidator.homeautomation.web.models.ValueBasedChartSeries;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;

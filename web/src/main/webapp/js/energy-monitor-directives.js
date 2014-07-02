@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var directives = angular.module('directives', []);
+var directives = angular.module('directives', ['EnergyServices']);
 
 function formatPower(usage) {
-    return parseFloat(usage).toFixed(1) + ' W';
+    return parseFloat(usage).toFixed(1) + " W";
 }
 
 directives.directive('emDigitalClock', function ($interval) {
@@ -26,14 +26,12 @@ directives.directive('emDigitalClock', function ($interval) {
         scope: {},
         template: '<div ng-bind="now | date:\'HH:mm:ss\'"></div>',
         link: function (scope) {
-            console.log("Link Activated");
             scope.now = new Date();
             var clockTimer = $interval(function () {
                 scope.now = new Date();
             }, 1000);
 
             scope.$on('$destroy', function () {
-                console.log("Destroy Called");
                 $interval.cancel(clockTimer);
             });
         }
@@ -41,22 +39,20 @@ directives.directive('emDigitalClock', function ($interval) {
 });
 
 
-directives.directive('emAveragePowerToday', function ($interval, $http) {
+directives.directive('emPowerTodayAverage', function ($interval, $http, PowerToday) {
     return {
-        restrict: 'E',
+        restrict: 'AE',
         scope: {},
-        template: '<div ng-bind="averagepowertoday"/>',
+        template: '<div ng-bind="powertodayaverage"/>',
         link: function (scope) {
-            $http.get('rest/client/power/average/today')
-                .success(function (usage) {
-                    scope.averagepowertoday = formatPower(usage);
-                });
+            var promise = PowerToday.average(function () {
+                scope.powertodayaverage = formatPower(promise.value);
+            });
 
             var clockTimer = $interval(function () {
-                $http.get('rest/client/power/average/today')
-                    .success(function (usage) {
-                        scope.averagepowertoday = parseFloat(usage).toFixed(1);
-                    })
+                var promise = PowerToday.average(function () {
+                    scope.powertodayaverage = formatPower(promise.value);
+                });
             }, 10000);
 
             scope.$on('$destroy', function () {
@@ -66,22 +62,20 @@ directives.directive('emAveragePowerToday', function ($interval, $http) {
     }
 });
 
-directives.directive('emMinimalPowerToday', function ($interval, $http) {
+directives.directive('emPowerTodayLow', function ($interval, $http, PowerToday) {
     return {
-        restrict: 'E',
+        restrict: 'AE',
         scope: {},
-        template: '<div ng-bind="minimalpowertoday"/>',
+        template: '<div ng-bind="powertodaylow"/>',
         link: function (scope) {
-            $http.get('rest/client/power/lowpower/today')
-                .success(function (usage) {
-                    scope.minimalpowertoday = formatPower(usage);
-                });
+            var promise = PowerToday.low(function () {
+                scope.powertodaylow = formatPower(promise.value);
+            });
 
             var clockTimer = $interval(function () {
-                $http.get('rest/client/power/lowpower/today')
-                    .success(function (usage) {
-                        scope.minimalpowertoday = parseFloat(usage).toFixed(1);
-                    })
+                var promise = PowerToday.low(function () {
+                    scope.powertodaylow = formatPower(promise.value);
+                });
             }, 10000);
 
             scope.$on('$destroy', function () {
@@ -89,4 +83,77 @@ directives.directive('emMinimalPowerToday', function ($interval, $http) {
             });
         }
     }
+});
+
+directives.directive('emPowerTodayHigh', function ($interval, $http, PowerToday) {
+    return {
+        restrict: 'AE',
+        scope: {},
+        template: '<div ng-bind="powertodayhigh"/>',
+        link: function (scope) {
+            var promise = PowerToday.high(function () {
+                scope.powertodayhigh = formatPower(promise.value);
+            });
+
+            var clockTimer = $interval(function () {
+                var promise = PowerToday.high(function () {
+                    scope.powertodayhigh = formatPower(promise.value);
+                });
+            }, 10000);
+
+            scope.$on('$destroy', function () {
+                $interval.cancel(clockTimer);
+            });
+        }
+    }
+});
+
+function formatAmount(value) {
+    return parseFloat(value).toFixed(2);
+}
+
+directives.directive('emPowerCostLow', function ($interval, $http, PowerCost) {
+    return {
+        restrict: 'AE',
+        scope: { period: '=period'},
+        template: '<div class="powerNoWrap" ng-bind="powercostlow"/>',
+        link: function (scope) {
+            var promise = PowerCost.low(function () {
+                scope.powercostlow = formatAmount(promise.value);
+            });
+            var clockTimer = $interval(function () {
+                var promise = PowerCost.low(function () {
+                    scope.powercostlow = formatAmount(promise.value);
+                });
+            }, 10000);
+
+            scope.$on('$destroy', function () {
+                $interval.cancel(clockTimer);
+            });
+        }
+    }
+
+});
+
+directives.directive('emPowerCostAverage', function ($interval, $http, PowerCost) {
+    return {
+        restrict: 'AE',
+        scope: { period: '=period'},
+        template: '<div class="powerNoWrap" ng-bind="powercostaverage"/>',
+        link: function (scope) {
+            var promise = PowerCost.average(function () {
+                scope.powercostaverage = formatAmount(promise.value);
+            });
+            var clockTimer = $interval(function () {
+                var promise = PowerCost.average(function () {
+                    scope.powercostaverage = formatAmount(promise.value);
+                });
+            }, 10000);
+
+            scope.$on('$destroy', function () {
+                $interval.cancel(clockTimer);
+            });
+        }
+    }
+
 });

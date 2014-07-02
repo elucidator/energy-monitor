@@ -19,7 +19,6 @@ package nl.elucidator.homeautomation.elastic.producer;
 import nl.elucidator.ee7.utilities.configuration.NamedProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -30,20 +29,17 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 /**
- * Test cases
+ *
  */
 public class ElasticClientProducer {
     private static final Logger LOGGER = LogManager.getLogger(ElasticClientProducer.class);
-
+    private static TransportClient transportClient = null;
     @Inject
     @NamedProperty(key = "elastic.host")
     private String host;
     @Inject
     @NamedProperty(key = "elastic.port")
     private int port;
-
-    private static TransportClient transportClient = null;
-
 
     @Produces
     public Client produceClient() {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var overviewControllers = angular.module('overViewControllers', []);
 
 overviewControllers.controller('mainController', function ($scope, $http, $timeout) {
@@ -72,27 +73,6 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
             return result;
         };
 
-        $scope.getLowPower = function () {
-            $http.get('rest/client/power/lowpower/today')
-                .success(function (usage) {
-                    $scope.lowPower = usage;
-                })
-        };
-
-        $scope.getMaxPower = function () {
-            $http.get('rest/client/power/maxpower/today')
-                .success(function (usage) {
-                    $scope.maxPower = usage;
-                })
-        };
-
-        $scope.getAverageToday = function () {
-            $http.get('rest/client/power/average/today')
-                .success(function (usage) {
-                    $scope.averageToday = parseFloat(usage).toFixed(1);
-                })
-        };
-
 
         // Function to replicate setInterval using $timeout service.
         $scope.intervalFunction = function () {
@@ -101,9 +81,6 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
                 $scope.getTotalUsedToday();
                 $scope.getUsageWeekAgo();
                 $scope.percentages();
-                $scope.getLowPower();
-                $scope.getMaxPower();
-                $scope.getAverageToday();
                 $scope.intervalFunction();
             }, 10000)
         };
@@ -115,9 +92,7 @@ overviewControllers.controller('mainController', function ($scope, $http, $timeo
         $scope.getUsageYesterday();
         $scope.getUsageWeekAgo();
         $scope.percentages();
-        $scope.getLowPower();
-        $scope.getMaxPower();
-        $scope.getAverageToday();
+
         // Kick off the interval
         $scope.intervalFunction();
     }

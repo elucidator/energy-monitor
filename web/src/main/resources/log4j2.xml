@@ -46,6 +46,10 @@
             <appender-ref ref="MyFile"/>
         </logger>
 
+        <logger name="nl.elucidator.ee7.utilities.configuration.ConfigurationFactory" level="TRACE" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+
         <root level="trace">
             <appender-ref ref="Console" level="error"/>
             <appender-ref ref="MyFile" level="trace"/>

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package nl.elucidator.homeautomation.web.gson.converters;
+package nl.elucidator.homeautomation.message_writers.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import nl.elucidator.homeautomation.web.controller.client.ChartSeries;
+import nl.elucidator.homeautomation.web.models.ChartSeries;
 
 import java.lang.reflect.Type;
 
