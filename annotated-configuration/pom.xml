@@ -40,6 +40,12 @@
             <version>3.0.2.Final</version>
             <type>pom</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xalan</artifactId>
+                    <groupId>xalan</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Arquillian and test dependencies -->
         <dependency>
