@@ -16,7 +16,6 @@
 
 package nl.elucidator.homeautomation.elastic.data;
 
-import junit.framework.TestCase;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
@@ -33,6 +32,7 @@ import java.util.ArrayList;
  */
 public class EnergyChartDataRetrieverTest {
     EnergyChartDataRetriever retriever;
+
     @Before
     public void before() {
 
@@ -50,20 +50,14 @@ public class EnergyChartDataRetrieverTest {
 
     @Test
     public void simple() {
-         DateTime untilTime = DateTime.now();
-         DateTime fromTime = untilTime.minusDays(1);
-         ArrayList<EnergyChartData> chartData = retriever.getChartForToday(false, "1h");
-        System.out.println("today = " + chartData.size());
+        DateTime untilTime = DateTime.now();
+        DateTime fromTime = untilTime.minusDays(1);
+        ArrayList<EnergyChartData> chartData = retriever.getChartForToday(false, "1h");
         final StringBuilder todayBuilder = new StringBuilder();
-        chartData.stream().forEach(e -> todayBuilder.append(e.toJavaScriptEntry()+ ","));
+        chartData.stream().forEach(e -> todayBuilder.append(e.toJavaScriptEntry() + ","));
 
         chartData = retriever.getHistoryDay(1, true, "30m");
         final StringBuilder historyBuilder = new StringBuilder();
         chartData.stream().forEach(e -> historyBuilder.append(e.toJavaScriptEntry() + ","));
-        System.out.println("history = " + chartData.size());
-
-        System.out.println("todayBuilder = " + todayBuilder);
-        System.out.println("historyBuilder = " + historyBuilder);
-
     }
 }

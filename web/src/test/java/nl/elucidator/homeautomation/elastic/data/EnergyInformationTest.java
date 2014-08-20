@@ -59,13 +59,11 @@ public class EnergyInformationTest {
     public void currentEnergy() {
         final String latestRecored = energyInformation.getLatestRecored();
         assertThat(latestRecored, notNullValue());
-        System.out.println("latestRecored = " + latestRecored);
     }
 
     @Test
     public void getLastEnergyAverage() {
         final double lastEnergyAverage = energyInformation.getLastEnergyAverage(10);
-        System.out.println("lastEnergyAverage = " + lastEnergyAverage);
     }
 
     @Test
@@ -74,7 +72,6 @@ public class EnergyInformationTest {
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
         final double lowPower = energyInformation.lowPowerPeriod(fromTime, untilTime);
-        System.out.println("lowPowerPeriod = " + lowPower);
     }
 
     @Test
@@ -83,12 +80,10 @@ public class EnergyInformationTest {
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
         final double maxPower = energyInformation.maxPowerPeriod(fromTime, untilTime);
-        System.out.println("maxPowerPeriod = " + maxPower);
     }
 
     @Test
     public void averageToday() {
         final double average = energyInformation.getAverage();
-        System.out.println("averagePeriod = " + average);
     }
 }
