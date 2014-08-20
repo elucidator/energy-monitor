@@ -20,18 +20,23 @@
         <td width="50%">
             <dt>Average power today:</dt>
             <dd class="lcd_bold">
-                <em-power-today-average/>
+                {{averageToday}} W
             </dd>
             <dd>Cost per year: &euro;
-                <em-power-cost-average/>
+                {{costAverage}}
             </dd>
 
             <dt>Minimal Power today:</dt>
             <dd class="lcd_bold">
-                <em_power_today_low/>
+                {{lowPower}} W
             </dd>
             <dd>Cost per year: &euro;
-                <em-power-cost-low/>
+                {{costLow}}
+            </dd>
+            <dt>Maximum power today:</dt>
+            <dd class="lcd_bold">{{maxPower}} W</dd>
+            <dd>Cost per year: &euro;
+                {{costMax}}
             </dd>
         </td>
         <td width="50%">
@@ -41,7 +46,6 @@
     <tr>
         <td width="50%">
             <highchart id="chart1" config="columnChart"></highchart>
-
         </td>
         <td width="50%">Row 2.2</td>
     </tr>

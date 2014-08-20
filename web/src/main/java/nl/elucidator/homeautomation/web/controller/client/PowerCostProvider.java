@@ -49,11 +49,11 @@ public class PowerCostProvider {
     public SimpleValue<Double> getCost(@PathParam("level") String condition, @PathParam("period") int periodDays) {
         switch (condition) {
             case "average":
-                return getPrice(energyInformation.average(), periodDays);
+                return getPrice(energyInformation.getAverage(), periodDays);
             case "low":
-                return getPrice(energyInformation.lowPower(), periodDays);
+                return getPrice(energyInformation.getLow(), periodDays);
             case "high":
-                return getPrice(energyInformation.maxPower(), periodDays);
+                return getPrice(energyInformation.getMax(), periodDays);
             default:
                 throw new IllegalArgumentException(condition + " is not a valid selection");
         }

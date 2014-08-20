@@ -20,14 +20,14 @@ chartControllers.controller('chartController', function ($scope, $http, $timeout
 
     $scope.chartSeries = [];
 
-    $scope.loadData = function (summing) {
+    $scope.loadChartData = function (summing) {
         $scope.areaChart.loading = true;
         $http.get('rest/provider/chart/histogram/today')
             .success(function (series) {
                 $scope.addSeries(series);
             })
 
-        for(var i=1;i<6;i++) {
+        for (var i = 1; i < 6; i++) {
             $http.get('rest/provider/chart/histogram/history/' + i)
                 .success(function (series) {
                     $scope.addSeries(series);
@@ -62,14 +62,14 @@ chartControllers.controller('chartController', function ($scope, $http, $timeout
 
             zoomType: "x",
 
-            legend : {
-                enabled : true
+            legend: {
+                enabled: true
             },
-            navigator : {
-                enabled : true
+            navigator: {
+                enabled: true
             },
-            scrollbar : {
-                enabled : false
+            scrollbar: {
+                enabled: false
             }
         },
         series: $scope.chartSeries,
@@ -88,6 +88,6 @@ chartControllers.controller('chartController', function ($scope, $http, $timeout
         $scope.$broadcast('highchartsng.reflow');
     };
 
-    $scope.loadData(false);
+    $scope.loadChartData(false);
 
 });

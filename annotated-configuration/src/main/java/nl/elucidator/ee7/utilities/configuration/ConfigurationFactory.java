@@ -20,11 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Singleton;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,15 +32,11 @@ import java.util.Properties;
 /**
  * Factory for providing nl.elucidator.homeautomation.configuration from a properties file
  */
-@Startup
 @Singleton
 public class ConfigurationFactory {
 
     private static final String APPLICATION_PROPERTIES = "application.properties";
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationFactory.class);
-    private static final String APPLICATION_CONFIGURATION = "applicationConfiguration";
-    @Resource(name = APPLICATION_CONFIGURATION)
-    Object applicationConfiguration;
     private Properties configData;
 
     @PostConstruct
@@ -50,10 +44,6 @@ public class ConfigurationFactory {
 
         LOGGER.info("Loading nl.elucidator.homeautomation.configuration");
         try {
-            if (applicationConfiguration != null) {
-                configData = loadPropertiesFromFile((String) applicationConfiguration);
-                return;
-            }
             configData =
                     loadDefaultFromClassPath();
         } catch (IOException e) {

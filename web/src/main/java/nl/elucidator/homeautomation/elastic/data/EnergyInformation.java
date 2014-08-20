@@ -57,7 +57,7 @@ public class EnergyInformation {
         return (List<DateHistogramFacet.Entry>) getHistogramEntries(DataConstants.INDEX_SMARTMETER, start, end, DataConstants.ELECTRICITY_DATA_ACTUAL_POWER, DataConstants.INTERVAL_ONE_HOUR);
     }
 
-    public double average() {
+    public double getAverage() {
         final DateTime untilTime = DateTime.now();
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
@@ -69,7 +69,7 @@ public class EnergyInformation {
         return histogramEntries.stream().mapToDouble(DateHistogramFacet.Entry::getMean).sum() / histogramEntries.size();
     }
 
-    public double lowPower() {
+    public double getLow() {
         final DateTime untilTime = DateTime.now();
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
@@ -81,7 +81,7 @@ public class EnergyInformation {
         return histogramEntries.stream().mapToDouble(DateHistogramFacet.Entry::getMin).min().getAsDouble();
     }
 
-    public double maxPower() {
+    public double getMax() {
         final DateTime untilTime = DateTime.now();
         DateTime startTime = untilTime.minusDays(1);
         final DateTime fromTime = new DateTime(startTime.getYear(), startTime.getMonthOfYear(), startTime.getDayOfMonth(), 0, 0, 0);
@@ -149,7 +149,7 @@ public class EnergyInformation {
         return resultFacet.getEntries();
     }
 
-    public int getTodaysUsage() {
+    public int getUsage() {
         DateTime untilTime = DateTime.now();
         DateTime fromTime = new DateTime(untilTime.getYear(), untilTime.getMonthOfYear(), untilTime.getDayOfMonth(), 0, 0, 0);
 

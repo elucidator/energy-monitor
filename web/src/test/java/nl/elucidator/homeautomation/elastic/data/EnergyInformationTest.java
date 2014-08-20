@@ -88,7 +88,7 @@ public class EnergyInformationTest {
 
     @Test
     public void averageToday() {
-        final double average = energyInformation.average();
+        final double average = energyInformation.getAverage();
         System.out.println("averagePeriod = " + average);
     }
 }

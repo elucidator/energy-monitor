@@ -19,133 +19,62 @@
  */
 var toonViewControllers = angular.module('toonViewControllers', ['directives', 'highcharts-ng']);
 
-toonViewControllers.controller('mainToonController', function ($scope, $http, $timeout) {
+toonViewControllers.controller('mainToonController', function ($scope, $http, $timeout, ElectricityData) {
 
-        $scope.dmsrData = null;
-        $scope.totalEnergyToday = 0;
-        $scope.totalEnergyYesterday = 0;
-        $scope.percentageYesterday = 0;
-        $scope.totalEnergyLastWeek = 0;
-        $scope.percentageLastWeek = 0;
         $scope.lowPower = 0;
         $scope.maxPower = 0;
         $scope.averageToday = 0;
         $scope.costLow = 0;
         $scope.costAverage = 0;
-        var kwPrice = 0.23;
+        $scope.costMax = 0;
         $scope.chartSeries = [];
 
-        $scope.getLatestRecord = function () {
-            $http.get('rest/client/record/latest')
-                .success(function (dmsr, status, headers, config) {
-                    $scope.dmsrData = dmsr;
-                    return dmsr;
-                })
-        };
+        $scope.updateTodayData = function () {
+            var statsToday = ElectricityData.today(function () {
+                $scope.lowPower = statsToday.low;
+                $scope.maxPower = statsToday.maximum;
+                $scope.averageToday = parseFloat(statsToday.average).toFixed(1);
+            })
 
-        $scope.getTotalUsedToday = function () {
-            $http.get('rest/client/power/usage/today')
-                .success(function (usage) {
-                    $scope.totalEnergyToday = usage;
-                })
-        };
+            var costToday = ElectricityData.costs(function () {
+                $scope.costAverage = parseFloat(costToday.average).toFixed(2);
+                $scope.costLow = parseFloat(costToday.low).toFixed(2);
+                $scope.costMax = parseFloat(costToday.maximum).toFixed(2);
+            })
+        }
 
-        $scope.getUsageYesterday = function () {
-            $http.get('rest/client/power/usage/day/1')
-                .success(function (usage) {
-                    $scope.totalEnergyYesterday = usage;
-                })
-        };
-
-        $scope.getUsageWeekAgo = function () {
-            $http.get('rest/client/power/usage/history/day/7')
-                .success(function (usage) {
-                    $scope.totalEnergyLastWeek = usage;
-                })
-        };
-
-        $scope.percentages = function () {
-            $scope.percentageLastWeek = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyLastWeek);
-            $scope.percentageYesterday = $scope.percentage($scope.totalEnergyToday, $scope.totalEnergyYesterday);
-        };
-
-        $scope.percentage = function (current, previous) {
-            var result;
-            var x = ((current / previous)) - 1;
-            result = parseFloat(x * 100).toFixed(2);
-
-            if (isNaN(result)) {
-                return '--';
-            }
-            return result;
-        };
-
-        $scope.getLowPower = function () {
-            $http.get('rest/client/power/lowpower/today')
-                .success(function (usage) {
-                    $scope.lowPower = usage;
-                    $scope.costLow = parseFloat(((usage * 24 * 365) / 1000) * kwPrice).toFixed(2);
-                })
-        };
-
-        $scope.getMaxPower = function () {
-            $http.get('rest/client/power/maxpower/today')
-                .success(function (usage) {
-                    $scope.maxPower = usage;
-                })
-        };
-
-        $scope.getAverageToday = function () {
-            $http.get('rest/client/power/average/today')
-                .success(function (usage) {
-                    $scope.averageToday = parseFloat(usage).toFixed(1);
-                    $scope.costAverage = parseFloat(((usage * 24 * 365) / 1000) * kwPrice).toFixed(2);
-                })
-        };
-
-
-        // Function to replicate setInterval using $timeout service.
+        var timeoutPromise;
         $scope.intervalFunction = function () {
-            $timeout(function () {
-                $scope.getLatestRecord();
-                $scope.getTotalUsedToday();
-                $scope.getUsageWeekAgo();
-                $scope.percentages();
-                $scope.getLowPower();
-                $scope.getMaxPower();
-                $scope.getAverageToday();
+            timeoutPromise = $timeout(function () {
+                $scope.updateTodayData();
                 $scope.intervalFunction();
-            }, 10000)
+            }, 1000);
         };
+
+        $scope.$on('$destroy', function () {
+            $timeout.cancel(timeoutPromise);
+        });
 
 
         $scope.addSeries = function (serie) {
             $scope.chartSeries.push(serie);
         };
 
-        $scope.loadData = function () {
-//            $scope.columnChart.loading = true;
+        $scope.loadChartData = function () {
             $http.get('rest/provider/chart/histogram/today?interval=1h')
                 .success(function (series) {
                     $scope.addSeries(series);
                 });
-
-//            $scope.columnChart.loading = false;
         };
 
 
         //Initialize
-        $scope.getLatestRecord();
-        $scope.getTotalUsedToday();
-        $scope.getUsageYesterday();
-        $scope.getUsageWeekAgo();
-        $scope.percentages();
-        $scope.getLowPower();
-        $scope.getMaxPower();
-        $scope.getAverageToday();
+
+
         // Kick off the interval
         $scope.intervalFunction();
-        $scope.loadData();
+
+        $scope.loadChartData();
 
 
         $scope.columnChart = {
@@ -161,7 +90,7 @@ toonViewControllers.controller('mainToonController', function ($scope, $http, $t
                 },
                 yAxis: {
                     title: {
-                        text: 'W/h',
+                        text: 'W',
                         style: {
                             color: Highcharts.getOptions().colors[1]
                         }

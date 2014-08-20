@@ -42,5 +42,16 @@ energyServices.factory("PowerCost", function ($resource) {
     )
 });
 
+energyServices.factory("ElectricityData", function ($resource) {
+    return $resource(
+        "rest/client/electricity/:method/:what",
+        {},
+        {
+            "today": { method: "GET", params: { method: "today", what: "stats"}, isArray: false},
+            "costs": { method: "GET", params: { method: "today", what: "cost", period: "365"}, isArray: false}
+        }
+    )
+});
+
 
 

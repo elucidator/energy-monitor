@@ -42,7 +42,7 @@ public class PowerToday {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("average")
     public SimpleValue<Double> getAverageTodayPower() {
-        return new SimpleValue<>(energyInformation.average());
+        return new SimpleValue<>(energyInformation.getAverage());
     }
 
     /**
@@ -54,7 +54,7 @@ public class PowerToday {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("low")
     public SimpleValue<Double> getMinPower() {
-        return new SimpleValue<>(energyInformation.lowPower());
+        return new SimpleValue<>(energyInformation.getLow());
     }
 
     /**
@@ -66,7 +66,7 @@ public class PowerToday {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("high")
     public SimpleValue<Double> getMaxPower() {
-        return new SimpleValue<>(energyInformation.maxPower());
+        return new SimpleValue<>(energyInformation.getMax());
     }
 
     /**
@@ -78,6 +78,6 @@ public class PowerToday {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("usage")
     public SimpleValue<Integer> getToday() {
-        return new SimpleValue<>(energyInformation.getTodaysUsage());
+        return new SimpleValue<>(energyInformation.getUsage());
     }
 }
